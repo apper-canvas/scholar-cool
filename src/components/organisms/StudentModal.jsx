@@ -11,7 +11,7 @@ const StudentModal = ({
   onSave, 
   mode = "view" // view, edit, create
 }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -30,14 +30,29 @@ const StudentModal = ({
       name: "",
       relationship: "",
       phone: ""
-    }
+    },
+    parentGuardian: {
+      name: "",
+      relationship: "",
+      primaryPhone: "",
+      secondaryPhone: "",
+      primaryEmail: "",
+      secondaryEmail: "",
+      address: {
+        street: "",
+        city: "",
+        state: "",
+        zipCode: ""
+      }
+    },
+    communicationHistory: []
   });
 
   const [activeTab, setActiveTab] = useState("personal");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (student && isOpen) {
+if (student && isOpen) {
       setFormData({
         firstName: student.firstName || "",
         lastName: student.lastName || "",
@@ -57,9 +72,24 @@ const StudentModal = ({
           name: "",
           relationship: "",
           phone: ""
-        }
+        },
+        parentGuardian: student.parentGuardian || {
+          name: "",
+          relationship: "",
+          primaryPhone: "",
+          secondaryPhone: "",
+          primaryEmail: "",
+          secondaryEmail: "",
+          address: {
+            street: "",
+            city: "",
+            state: "",
+            zipCode: ""
+          }
+        },
+        communicationHistory: student.communicationHistory || []
       });
-    } else if (mode === "create" && isOpen) {
+} else if (mode === "create" && isOpen) {
       setFormData({
         firstName: "",
         lastName: "",
@@ -79,7 +109,22 @@ const StudentModal = ({
           name: "",
           relationship: "",
           phone: ""
-        }
+        },
+        parentGuardian: {
+          name: "",
+          relationship: "",
+          primaryPhone: "",
+          secondaryPhone: "",
+          primaryEmail: "",
+          secondaryEmail: "",
+          address: {
+            street: "",
+            city: "",
+            state: "",
+            zipCode: ""
+          }
+        },
+        communicationHistory: []
       });
     }
   }, [student, isOpen, mode]);
@@ -118,10 +163,11 @@ const StudentModal = ({
 
   if (!isOpen) return null;
 
-  const tabs = [
+const tabs = [
     { id: "personal", name: "Personal Info", icon: "User" },
     { id: "academic", name: "Academic", icon: "GraduationCap" },
-    { id: "contact", name: "Contact & Emergency", icon: "Phone" }
+    { id: "contact", name: "Contact & Emergency", icon: "Phone" },
+    { id: "parent", name: "Parent/Guardian", icon: "Users" }
   ];
 
   const getStatusBadge = (status) => {
@@ -182,7 +228,7 @@ const StudentModal = ({
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[60vh]">
+<form onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[70vh]">
           {activeTab === "personal" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -371,6 +417,228 @@ const StudentModal = ({
                     />
                   </div>
                 </div>
+              </div>
+</div>
+          )}
+          
+          {/* Parent/Guardian Tab */}
+          {activeTab === "parent" && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Parent/Guardian Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    label="Full Name"
+                    value={formData.parentGuardian.name}
+                    onChange={(value) => handleChange("parentGuardian.name", value)}
+                    placeholder="Enter parent/guardian name"
+                    required
+                    readOnly={mode === "view"}
+                  />
+                  <FormField
+                    label="Relationship"
+                    type="select"
+                    value={formData.parentGuardian.relationship}
+                    onChange={(value) => handleChange("parentGuardian.relationship", value)}
+                    options={[
+                      { value: "", label: "Select relationship" },
+                      { value: "Mother", label: "Mother" },
+                      { value: "Father", label: "Father" },
+                      { value: "Guardian", label: "Guardian" },
+                      { value: "Grandparent", label: "Grandparent" },
+                      { value: "Stepparent", label: "Stepparent" },
+                      { value: "Other", label: "Other" }
+                    ]}
+                    readOnly={mode === "view"}
+                  />
+                  <FormField
+                    label="Primary Phone"
+                    type="tel"
+                    value={formData.parentGuardian.primaryPhone}
+                    onChange={(value) => handleChange("parentGuardian.primaryPhone", value)}
+                    placeholder="(555) 123-4567"
+                    required
+                    readOnly={mode === "view"}
+                  />
+                  <FormField
+                    label="Secondary Phone"
+                    type="tel"
+                    value={formData.parentGuardian.secondaryPhone}
+                    onChange={(value) => handleChange("parentGuardian.secondaryPhone", value)}
+                    placeholder="(555) 123-4567"
+                    readOnly={mode === "view"}
+                  />
+                  <FormField
+                    label="Primary Email"
+                    type="email"
+                    value={formData.parentGuardian.primaryEmail}
+                    onChange={(value) => handleChange("parentGuardian.primaryEmail", value)}
+                    placeholder="parent@example.com"
+                    required
+                    readOnly={mode === "view"}
+                  />
+                  <FormField
+                    label="Secondary Email"
+                    type="email"
+                    value={formData.parentGuardian.secondaryEmail}
+                    onChange={(value) => handleChange("parentGuardian.secondaryEmail", value)}
+                    placeholder="parent2@example.com"
+                    readOnly={mode === "view"}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-md font-medium text-gray-900 mb-3">Address</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <FormField
+                      label="Street Address"
+                      value={formData.parentGuardian.address.street}
+                      onChange={(value) => handleChange("parentGuardian.address.street", value)}
+                      placeholder="123 Main St"
+                      readOnly={mode === "view"}
+                    />
+                  </div>
+                  <FormField
+                    label="City"
+                    value={formData.parentGuardian.address.city}
+                    onChange={(value) => handleChange("parentGuardian.address.city", value)}
+                    placeholder="City"
+                    readOnly={mode === "view"}
+                  />
+                  <FormField
+                    label="State"
+                    value={formData.parentGuardian.address.state}
+                    onChange={(value) => handleChange("parentGuardian.address.state", value)}
+                    placeholder="State"
+                    readOnly={mode === "view"}
+                  />
+                  <FormField
+                    label="ZIP Code"
+                    value={formData.parentGuardian.address.zipCode}
+                    onChange={(value) => handleChange("parentGuardian.address.zipCode", value)}
+                    placeholder="12345"
+                    readOnly={mode === "view"}
+                  />
+                </div>
+              </div>
+
+              {/* Communication History */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-md font-medium text-gray-900">Communication History</h4>
+                  {mode !== "view" && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      icon="Plus"
+                      onClick={() => {
+                        const newEntry = {
+                          id: Date.now(),
+                          date: new Date().toISOString().split('T')[0],
+                          type: "Phone Call",
+                          notes: "",
+                          staffMember: "Current User"
+                        };
+                        handleChange("communicationHistory", [...formData.communicationHistory, newEntry]);
+                      }}
+                    >
+                      Add Communication
+                    </Button>
+                  )}
+                </div>
+                
+                {formData.communicationHistory.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <ApperIcon name="MessageSquare" size={48} className="mx-auto mb-3 text-gray-300" />
+                    <p>No communication history yet</p>
+                    {mode !== "view" && (
+                      <p className="text-sm">Click "Add Communication" to record interactions</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {formData.communicationHistory.map((entry, index) => (
+                      <div key={entry.id || index} className="border border-gray-200 rounded-lg p-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                          <FormField
+                            label="Date"
+                            type="date"
+                            value={entry.date}
+                            onChange={(value) => {
+                              const updated = [...formData.communicationHistory];
+                              updated[index] = { ...updated[index], date: value };
+                              handleChange("communicationHistory", updated);
+                            }}
+                            readOnly={mode === "view"}
+                          />
+                          <FormField
+                            label="Communication Type"
+                            type="select"
+                            value={entry.type}
+                            onChange={(value) => {
+                              const updated = [...formData.communicationHistory];
+                              updated[index] = { ...updated[index], type: value };
+                              handleChange("communicationHistory", updated);
+                            }}
+                            options={[
+                              { value: "Phone Call", label: "Phone Call" },
+                              { value: "Email", label: "Email" },
+                              { value: "In-Person", label: "In-Person Meeting" },
+                              { value: "Text Message", label: "Text Message" },
+                              { value: "Letter", label: "Letter" },
+                              { value: "Other", label: "Other" }
+                            ]}
+                            readOnly={mode === "view"}
+                          />
+                          <FormField
+                            label="Staff Member"
+                            value={entry.staffMember}
+                            onChange={(value) => {
+                              const updated = [...formData.communicationHistory];
+                              updated[index] = { ...updated[index], staffMember: value };
+                              handleChange("communicationHistory", updated);
+                            }}
+                            placeholder="Staff member name"
+                            readOnly={mode === "view"}
+                          />
+                        </div>
+                        <FormField
+                          label="Notes"
+                          type="textarea"
+                          value={entry.notes}
+                          onChange={(value) => {
+                            const updated = [...formData.communicationHistory];
+                            updated[index] = { ...updated[index], notes: value };
+                            handleChange("communicationHistory", updated);
+                          }}
+                          placeholder="Communication notes and details..."
+                          rows={3}
+                          readOnly={mode === "view"}
+                        />
+                        {mode !== "view" && (
+                          <div className="mt-3 flex justify-end">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              icon="Trash2"
+                              onClick={() => {
+                                const updated = formData.communicationHistory.filter((_, i) => i !== index);
+                                handleChange("communicationHistory", updated);
+                              }}
+                              className="text-red-600 hover:text-red-700 hover:border-red-300"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}

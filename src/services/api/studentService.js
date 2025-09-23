@@ -20,14 +20,24 @@ class StudentService {
     return { ...student };
   }
 
-  async create(studentData) {
+async create(studentData) {
     await new Promise(resolve => setTimeout(resolve, 400));
     
     const maxId = Math.max(...this.students.map(s => s.Id), 0);
     const newStudent = {
       ...studentData,
       Id: maxId + 1,
-      enrollmentDate: studentData.enrollmentDate || new Date().toISOString().split("T")[0]
+      enrollmentDate: studentData.enrollmentDate || new Date().toISOString().split("T")[0],
+      parentGuardian: studentData.parentGuardian || {
+        name: "",
+        relationship: "",
+        primaryPhone: "",
+        secondaryPhone: "",
+        primaryEmail: "",
+        secondaryEmail: "",
+        address: { street: "", city: "", state: "", zipCode: "" }
+      },
+      communicationHistory: studentData.communicationHistory || []
     };
     
     this.students.push(newStudent);
@@ -42,10 +52,20 @@ class StudentService {
       throw new Error("Student not found");
     }
     
-    this.students[index] = {
+this.students[index] = {
       ...this.students[index],
       ...studentData,
-      Id: parseInt(id)
+      Id: parseInt(id),
+      parentGuardian: studentData.parentGuardian || this.students[index].parentGuardian || {
+        name: "",
+        relationship: "",
+        primaryPhone: "",
+        secondaryPhone: "",
+        primaryEmail: "",
+        secondaryEmail: "",
+        address: { street: "", city: "", state: "", zipCode: "" }
+      },
+      communicationHistory: studentData.communicationHistory || this.students[index].communicationHistory || []
     };
     
     return { ...this.students[index] };
