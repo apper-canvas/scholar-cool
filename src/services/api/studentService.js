@@ -252,7 +252,7 @@ async create(studentData) {
       }
       
       if (response.results) {
-        const successful = response.results.filter(r => r.success);
+const successful = response.results.filter(r => r.success);
         const failed = response.results.filter(r => !r.success);
         
         if (failed.length > 0) {
@@ -266,34 +266,34 @@ async create(studentData) {
           throw new Error("Failed to create student");
         }
         
+        // Send email notification after successful student creation
+        if (successful.length > 0) {
+          try {
+            const { ApperClient } = window.ApperSDK;
+            const apperClient = new ApperClient({
+              apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+              apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+            });
+            
+            await apperClient.functions.invoke(import.meta.env.VITE_SEND_STUDENT_NOTIFICATION, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                studentData: studentData
+              })
+            });
+          } catch (emailError) {
+            console.error('Failed to send student notification email:', emailError);
+            // Don't throw error here - student creation was successful
+          }
+        }
+        
         return successful[0]?.data || {};
       }
       
       return {};
-      
-// Send email notification after successful student creation
-      if (successful.length > 0) {
-        try {
-          const { ApperClient } = window.ApperSDK;
-          const apperClient = new ApperClient({
-            apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-            apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-          });
-          
-          await apperClient.functions.invoke(import.meta.env.VITE_SEND_STUDENT_NOTIFICATION, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              studentData: studentData
-            })
-          });
-        } catch (emailError) {
-          console.error('Failed to send student notification email:', emailError);
-          // Don't throw error here - student creation was successful
-        }
-      }
       
     } catch (error) {
       console.error("Error creating student:", error?.response?.data?.message || error);
