@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import StudentTable from "@/components/organisms/StudentTable";
-import StudentModal from "@/components/organisms/StudentModal";
-import ImportExportModal from "@/components/organisms/ImportExportModal";
-import Button from "@/components/atoms/Button";
-import ApperIcon from "@/components/ApperIcon";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
 import { studentService } from "@/services/api/studentService";
 import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import Loading from "@/components/ui/Loading";
+import Button from "@/components/atoms/Button";
+import StudentModal from "@/components/organisms/StudentModal";
+import ImportExportModal from "@/components/organisms/ImportExportModal";
+import StudentTable from "@/components/organisms/StudentTable";
 
 const Students = () => {
   const [students, setStudents] = useState([]);
@@ -184,8 +184,7 @@ const [showImportExport, setShowImportExport] = useState(false);
           loading={loading}
         />
       )}
-
-      {/* Import/Export Modal */}
+{/* Import/Export Modal */}
       <ImportExportModal
         isOpen={showImportExport}
         onClose={() => setShowImportExport(false)}
@@ -194,7 +193,6 @@ const [showImportExport, setShowImportExport] = useState(false);
         type="students"
         loading={importLoading}
       />
-      )}
 
       {/* Modal */}
       <StudentModal
