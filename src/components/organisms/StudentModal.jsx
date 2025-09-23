@@ -185,8 +185,8 @@ const tabs = [
                 mode === "edit" ? "Edit Student" : "Student Details";
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[95vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
@@ -229,7 +229,7 @@ const tabs = [
         </div>
 
 {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[70vh]">
+<div className="p-6 overflow-y-auto max-h-[60vh]">
           {activeTab === "personal" && (
             <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-6">
@@ -648,7 +648,7 @@ disabled={isReadOnly}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+<div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 flex-shrink-0">
           <Button
             type="button"
             variant="secondary"
