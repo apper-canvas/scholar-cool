@@ -122,8 +122,6 @@ onError: function(error) {
   }
   
 return (
-  
-return (
     <AuthContext.Provider value={authMethods}>
       <Routes>
         <Route path="/login" element={<Login />} />
