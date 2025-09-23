@@ -1,91 +1,396 @@
-import studentsData from "@/services/mockData/students.json";
 import { parseCSV, generateCSV, validateStudentData, normalizeStudentData } from "@/utils/csvUtils";
+import { toast } from "react-toastify";
+
 class StudentService {
   constructor() {
-    this.students = [...studentsData];
+    this.tableName = 'student_c';
+    this.apperClient = null;
+    this.initializeClient();
+  }
+
+  initializeClient() {
+    if (typeof window !== 'undefined' && window.ApperSDK) {
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+    }
+  }
+
+  ensureClient() {
+    if (!this.apperClient) {
+      this.initializeClient();
+    }
+    return this.apperClient;
   }
 
 async getAll() {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return [...this.students];
-  }
-
-  async getById(id) {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    const student = this.students.find(s => s.Id === parseInt(id));
-    if (!student) {
-      throw new Error("Student not found");
+    try {
+      const client = this.ensureClient();
+      const params = {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "first_name_c"}},
+          {"field": {"Name": "last_name_c"}},
+          {"field": {"Name": "email_c"}},
+          {"field": {"Name": "phone_c"}},
+          {"field": {"Name": "date_of_birth_c"}},
+          {"field": {"Name": "grade_level_c"}},
+          {"field": {"Name": "enrollment_status_c"}},
+          {"field": {"Name": "student_id_c"}},
+          {"field": {"Name": "address_street_c"}},
+          {"field": {"Name": "address_city_c"}},
+          {"field": {"Name": "address_state_c"}},
+          {"field": {"Name": "address_zip_code_c"}},
+          {"field": {"Name": "emergency_contact_name_c"}},
+          {"field": {"Name": "emergency_contact_relationship_c"}},
+          {"field": {"Name": "emergency_contact_phone_c"}},
+          {"field": {"Name": "enrollment_date_c"}},
+          {"field": {"Name": "parent_guardian_name_c"}},
+          {"field": {"Name": "parent_guardian_relationship_c"}},
+          {"field": {"Name": "parent_guardian_primary_phone_c"}},
+          {"field": {"Name": "parent_guardian_secondary_phone_c"}},
+          {"field": {"Name": "parent_guardian_primary_email_c"}},
+          {"field": {"Name": "parent_guardian_secondary_email_c"}},
+          {"field": {"Name": "parent_guardian_address_street_c"}},
+          {"field": {"Name": "parent_guardian_address_city_c"}},
+          {"field": {"Name": "parent_guardian_address_state_c"}},
+          {"field": {"Name": "parent_guardian_address_zip_code_c"}},
+          {"field": {"Name": "communication_history_c"}}
+        ]
+      };
+      
+      const response = await client.fetchRecords(this.tableName, params);
+      
+      if (!response.success) {
+        console.error("Failed to fetch students:", response.message);
+        toast.error(response.message);
+        return [];
+      }
+      
+      // Transform database records to UI format
+      return response.data.map(record => ({
+        Id: record.Id,
+        firstName: record.first_name_c || "",
+        lastName: record.last_name_c || "",
+        email: record.email_c || "",
+        phone: record.phone_c || "",
+        dateOfBirth: record.date_of_birth_c || "",
+        gradeLevel: record.grade_level_c || "",
+        enrollmentStatus: record.enrollment_status_c || "Active",
+        studentId: record.student_id_c || "",
+        enrollmentDate: record.enrollment_date_c || "",
+        address: {
+          street: record.address_street_c || "",
+          city: record.address_city_c || "",
+          state: record.address_state_c || "",
+          zipCode: record.address_zip_code_c || ""
+        },
+        emergencyContact: {
+          name: record.emergency_contact_name_c || "",
+          relationship: record.emergency_contact_relationship_c || "",
+          phone: record.emergency_contact_phone_c || ""
+        },
+        parentGuardian: {
+          name: record.parent_guardian_name_c || "",
+          relationship: record.parent_guardian_relationship_c || "",
+          primaryPhone: record.parent_guardian_primary_phone_c || "",
+          secondaryPhone: record.parent_guardian_secondary_phone_c || "",
+          primaryEmail: record.parent_guardian_primary_email_c || "",
+          secondaryEmail: record.parent_guardian_secondary_email_c || "",
+          address: {
+            street: record.parent_guardian_address_street_c || "",
+            city: record.parent_guardian_address_city_c || "",
+            state: record.parent_guardian_address_state_c || "",
+            zipCode: record.parent_guardian_address_zip_code_c || ""
+          }
+        },
+        communicationHistory: this.parseCommunicationHistory(record.communication_history_c)
+      }));
+      
+    } catch (error) {
+      console.error("Error fetching students:", error?.response?.data?.message || error);
+      toast.error("Failed to load students. Please try again.");
+      return [];
     }
-    return { ...student };
   }
 
-  async create(studentData) {
-    await new Promise(resolve => setTimeout(resolve, 400));
-    
-    const maxId = Math.max(...this.students.map(s => s.Id), 0);
-    const newStudent = {
-      ...studentData,
-      Id: maxId + 1,
-      enrollmentDate: studentData.enrollmentDate || new Date().toISOString().split("T")[0],
-      parentGuardian: studentData.parentGuardian || {
-        name: "",
-        relationship: "",
-        primaryPhone: "",
-        secondaryPhone: "",
-        primaryEmail: "",
-        secondaryEmail: "",
-        address: { street: "", city: "", state: "", zipCode: "" }
-      },
-      communicationHistory: studentData.communicationHistory || []
-    };
-    
-    this.students.push(newStudent);
-    return { ...newStudent };
-  }
-
-  async update(id, studentData) {
-    await new Promise(resolve => setTimeout(resolve, 400));
-    
-    const index = this.students.findIndex(s => s.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Student not found");
+async getById(id) {
+    try {
+      const client = this.ensureClient();
+      const params = {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "first_name_c"}},
+          {"field": {"Name": "last_name_c"}},
+          {"field": {"Name": "email_c"}},
+          {"field": {"Name": "phone_c"}},
+          {"field": {"Name": "date_of_birth_c"}},
+          {"field": {"Name": "grade_level_c"}},
+          {"field": {"Name": "enrollment_status_c"}},
+          {"field": {"Name": "student_id_c"}},
+          {"field": {"Name": "address_street_c"}},
+          {"field": {"Name": "address_city_c"}},
+          {"field": {"Name": "address_state_c"}},
+          {"field": {"Name": "address_zip_code_c"}},
+          {"field": {"Name": "emergency_contact_name_c"}},
+          {"field": {"Name": "emergency_contact_relationship_c"}},
+          {"field": {"Name": "emergency_contact_phone_c"}},
+          {"field": {"Name": "enrollment_date_c"}},
+          {"field": {"Name": "parent_guardian_name_c"}},
+          {"field": {"Name": "parent_guardian_relationship_c"}},
+          {"field": {"Name": "parent_guardian_primary_phone_c"}},
+          {"field": {"Name": "parent_guardian_secondary_phone_c"}},
+          {"field": {"Name": "parent_guardian_primary_email_c"}},
+          {"field": {"Name": "parent_guardian_secondary_email_c"}},
+          {"field": {"Name": "parent_guardian_address_street_c"}},
+          {"field": {"Name": "parent_guardian_address_city_c"}},
+          {"field": {"Name": "parent_guardian_address_state_c"}},
+          {"field": {"Name": "parent_guardian_address_zip_code_c"}},
+          {"field": {"Name": "communication_history_c"}}
+        ]
+      };
+      
+      const response = await client.getRecordById(this.tableName, parseInt(id), params);
+      
+      if (!response?.data) {
+        toast.error("Student not found");
+        return null;
+      }
+      
+      const record = response.data;
+      return {
+        Id: record.Id,
+        firstName: record.first_name_c || "",
+        lastName: record.last_name_c || "",
+        email: record.email_c || "",
+        phone: record.phone_c || "",
+        dateOfBirth: record.date_of_birth_c || "",
+        gradeLevel: record.grade_level_c || "",
+        enrollmentStatus: record.enrollment_status_c || "Active",
+        studentId: record.student_id_c || "",
+        enrollmentDate: record.enrollment_date_c || "",
+        address: {
+          street: record.address_street_c || "",
+          city: record.address_city_c || "",
+          state: record.address_state_c || "",
+          zipCode: record.address_zip_code_c || ""
+        },
+        emergencyContact: {
+          name: record.emergency_contact_name_c || "",
+          relationship: record.emergency_contact_relationship_c || "",
+          phone: record.emergency_contact_phone_c || ""
+        },
+        parentGuardian: {
+          name: record.parent_guardian_name_c || "",
+          relationship: record.parent_guardian_relationship_c || "",
+          primaryPhone: record.parent_guardian_primary_phone_c || "",
+          secondaryPhone: record.parent_guardian_secondary_phone_c || "",
+          primaryEmail: record.parent_guardian_primary_email_c || "",
+          secondaryEmail: record.parent_guardian_secondary_email_c || "",
+          address: {
+            street: record.parent_guardian_address_street_c || "",
+            city: record.parent_guardian_address_city_c || "",
+            state: record.parent_guardian_address_state_c || "",
+            zipCode: record.parent_guardian_address_zip_code_c || ""
+          }
+        },
+        communicationHistory: this.parseCommunicationHistory(record.communication_history_c)
+      };
+      
+    } catch (error) {
+      console.error(`Error fetching student ${id}:`, error?.response?.data?.message || error);
+      toast.error("Failed to load student details. Please try again.");
+      return null;
     }
-    
-    this.students[index] = {
-      ...this.students[index],
-      ...studentData,
-      Id: parseInt(id),
-      parentGuardian: studentData.parentGuardian || this.students[index].parentGuardian || {
-        name: "",
-        relationship: "",
-        primaryPhone: "",
-        secondaryPhone: "",
-        primaryEmail: "",
-        secondaryEmail: "",
-        address: { street: "", city: "", state: "", zipCode: "" }
-      },
-      communicationHistory: studentData.communicationHistory || this.students[index].communicationHistory || []
-    };
-    
-    return { ...this.students[index] };
   }
 
-  async delete(id) {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    const index = this.students.findIndex(s => s.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Student not found");
+async create(studentData) {
+    try {
+      const client = this.ensureClient();
+      
+      // Transform UI data to database format (only Updateable fields)
+      const payload = {
+        records: [{
+          Name: `${studentData.firstName} ${studentData.lastName}`,
+          first_name_c: studentData.firstName || "",
+          last_name_c: studentData.lastName || "",
+          email_c: studentData.email || "",
+          phone_c: studentData.phone || "",
+          date_of_birth_c: studentData.dateOfBirth || "",
+          grade_level_c: studentData.gradeLevel || "",
+          enrollment_status_c: studentData.enrollmentStatus || "Active",
+          student_id_c: studentData.studentId || `STU${Date.now()}`,
+          address_street_c: studentData.address?.street || "",
+          address_city_c: studentData.address?.city || "",
+          address_state_c: studentData.address?.state || "",
+          address_zip_code_c: studentData.address?.zipCode || "",
+          emergency_contact_name_c: studentData.emergencyContact?.name || "",
+          emergency_contact_relationship_c: studentData.emergencyContact?.relationship || "",
+          emergency_contact_phone_c: studentData.emergencyContact?.phone || "",
+          enrollment_date_c: studentData.enrollmentDate || new Date().toISOString().split("T")[0],
+          parent_guardian_name_c: studentData.parentGuardian?.name || "",
+          parent_guardian_relationship_c: studentData.parentGuardian?.relationship || "",
+          parent_guardian_primary_phone_c: studentData.parentGuardian?.primaryPhone || "",
+          parent_guardian_secondary_phone_c: studentData.parentGuardian?.secondaryPhone || "",
+          parent_guardian_primary_email_c: studentData.parentGuardian?.primaryEmail || "",
+          parent_guardian_secondary_email_c: studentData.parentGuardian?.secondaryEmail || "",
+          parent_guardian_address_street_c: studentData.parentGuardian?.address?.street || "",
+          parent_guardian_address_city_c: studentData.parentGuardian?.address?.city || "",
+          parent_guardian_address_state_c: studentData.parentGuardian?.address?.state || "",
+          parent_guardian_address_zip_code_c: studentData.parentGuardian?.address?.zipCode || "",
+          communication_history_c: this.serializeCommunicationHistory(studentData.communicationHistory || [])
+        }]
+      };
+      
+      const response = await client.createRecord(this.tableName, payload);
+      
+      if (!response.success) {
+        console.error("Failed to create student:", response.message);
+        toast.error(response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to create student:`, failed);
+          failed.forEach(record => {
+            if (record.errors) {
+              record.errors.forEach(error => toast.error(`${error.fieldLabel}: ${error.message}`));
+            }
+            if (record.message) toast.error(record.message);
+          });
+          throw new Error("Failed to create student");
+        }
+        
+        return successful[0]?.data || {};
+      }
+      
+      return {};
+      
+    } catch (error) {
+      console.error("Error creating student:", error?.response?.data?.message || error);
+      throw error;
     }
-    
-    this.students.splice(index, 1);
-    return true;
   }
 
-  async bulkImport(file) {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+async update(id, studentData) {
+    try {
+      const client = this.ensureClient();
+      
+      // Transform UI data to database format (only Updateable fields)
+      const payload = {
+        records: [{
+          Id: parseInt(id),
+          Name: `${studentData.firstName} ${studentData.lastName}`,
+          first_name_c: studentData.firstName || "",
+          last_name_c: studentData.lastName || "",
+          email_c: studentData.email || "",
+          phone_c: studentData.phone || "",
+          date_of_birth_c: studentData.dateOfBirth || "",
+          grade_level_c: studentData.gradeLevel || "",
+          enrollment_status_c: studentData.enrollmentStatus || "Active",
+          student_id_c: studentData.studentId || "",
+          address_street_c: studentData.address?.street || "",
+          address_city_c: studentData.address?.city || "",
+          address_state_c: studentData.address?.state || "",
+          address_zip_code_c: studentData.address?.zipCode || "",
+          emergency_contact_name_c: studentData.emergencyContact?.name || "",
+          emergency_contact_relationship_c: studentData.emergencyContact?.relationship || "",
+          emergency_contact_phone_c: studentData.emergencyContact?.phone || "",
+          enrollment_date_c: studentData.enrollmentDate || "",
+          parent_guardian_name_c: studentData.parentGuardian?.name || "",
+          parent_guardian_relationship_c: studentData.parentGuardian?.relationship || "",
+          parent_guardian_primary_phone_c: studentData.parentGuardian?.primaryPhone || "",
+          parent_guardian_secondary_phone_c: studentData.parentGuardian?.secondaryPhone || "",
+          parent_guardian_primary_email_c: studentData.parentGuardian?.primaryEmail || "",
+          parent_guardian_secondary_email_c: studentData.parentGuardian?.secondaryEmail || "",
+          parent_guardian_address_street_c: studentData.parentGuardian?.address?.street || "",
+          parent_guardian_address_city_c: studentData.parentGuardian?.address?.city || "",
+          parent_guardian_address_state_c: studentData.parentGuardian?.address?.state || "",
+          parent_guardian_address_zip_code_c: studentData.parentGuardian?.address?.zipCode || "",
+          communication_history_c: this.serializeCommunicationHistory(studentData.communicationHistory || [])
+        }]
+      };
+      
+      const response = await client.updateRecord(this.tableName, payload);
+      
+      if (!response.success) {
+        console.error("Failed to update student:", response.message);
+        toast.error(response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to update student:`, failed);
+          failed.forEach(record => {
+            if (record.errors) {
+              record.errors.forEach(error => toast.error(`${error.fieldLabel}: ${error.message}`));
+            }
+            if (record.message) toast.error(record.message);
+          });
+          throw new Error("Failed to update student");
+        }
+        
+        return successful[0]?.data || {};
+      }
+      
+      return {};
+      
+    } catch (error) {
+      console.error("Error updating student:", error?.response?.data?.message || error);
+      throw error;
+    }
+  }
+
+async delete(id) {
+    try {
+      const client = this.ensureClient();
+      const params = { 
+        RecordIds: [parseInt(id)]
+      };
+      
+      const response = await client.deleteRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error("Failed to delete student:", response.message);
+        toast.error(response.message);
+        return false;
+      }
+      
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to delete student:`, failed);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          return false;
+        }
+        
+        return successful.length > 0;
+      }
+      
+      return true;
+      
+    } catch (error) {
+      console.error("Error deleting student:", error?.response?.data?.message || error);
+      toast.error("Failed to delete student. Please try again.");
+      return false;
+    }
+  }
+
+async bulkImport(file) {
     try {
       // Parse CSV file
       const rawData = await parseCSV(file);
@@ -109,28 +414,16 @@ async getAll() {
       const duplicates = [];
       
       for (const studentData of validRecords) {
-        // Check for existing student with same email
-        const existingStudent = this.students.find(s => 
-          s.email.toLowerCase() === studentData.email.toLowerCase()
-        );
-        
-        if (existingStudent) {
+        try {
+          await this.create(studentData);
+          successCount++;
+        } catch (error) {
           duplicates.push({
             email: studentData.email,
-            name: `${studentData.firstName} ${studentData.lastName}`
+            name: `${studentData.firstName} ${studentData.lastName}`,
+            error: error.message
           });
-          continue;
         }
-        
-        // Create new student
-        const maxId = Math.max(...this.students.map(s => s.Id), 0);
-        const newStudent = {
-          ...studentData,
-          Id: maxId + successCount + 1
-        };
-        
-        this.students.push(newStudent);
-        successCount++;
       }
       
       const result = {
@@ -145,7 +438,7 @@ async getAll() {
         duplicates.forEach((duplicate, index) => {
           result.errors.push({
             row: `duplicate_${index + 1}`,
-            errors: [`Student with email ${duplicate.email} already exists`],
+            errors: [duplicate.error || `Student with email ${duplicate.email} already exists`],
             data: duplicate
           });
         });
@@ -158,21 +451,21 @@ async getAll() {
     }
   }
 
-  async bulkExport() {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
+async bulkExport() {
     try {
-      const exportData = this.students.map(student => ({
+      const students = await this.getAll();
+      
+      const exportData = students.map(student => ({
         Id: student.Id,
         firstName: student.firstName,
         lastName: student.lastName,
         email: student.email,
         phone: student.phone,
         dateOfBirth: student.dateOfBirth,
-        address: student.address,
-        emergencyContact: student.emergencyContact,
-        grade: student.grade,
-        status: student.status,
+        address: `${student.address?.street || ''}, ${student.address?.city || ''}, ${student.address?.state || ''} ${student.address?.zipCode || ''}`.trim(),
+        emergencyContact: `${student.emergencyContact?.name || ''} - ${student.emergencyContact?.phone || ''}`,
+        grade: student.gradeLevel,
+        status: student.enrollmentStatus,
         enrollmentDate: student.enrollmentDate,
         parentGuardianName: student.parentGuardian?.name || '',
         parentGuardianRelationship: student.parentGuardian?.relationship || '',
@@ -194,6 +487,21 @@ async getAll() {
     } catch (error) {
       throw new Error(`Export failed: ${error.message}`);
     }
+  }
+
+  // Helper methods for communication history
+  parseCommunicationHistory(historyText) {
+    if (!historyText) return [];
+    try {
+      return JSON.parse(historyText);
+    } catch {
+      return [];
+    }
+  }
+
+  serializeCommunicationHistory(history) {
+    if (!history || history.length === 0) return "";
+    return JSON.stringify(history);
   }
 }
 

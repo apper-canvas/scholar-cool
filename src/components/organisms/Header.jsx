@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import { AuthContext } from "../../App";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { logout } = useContext(AuthContext);
+  const { user } = useSelector((state) => state.user);
 
   const navigation = [
     { name: "Dashboard", href: "/", icon: "LayoutDashboard" },
@@ -51,7 +56,27 @@ const Header = () => {
                 <span>{item.name}</span>
               </Link>
             ))}
-          </nav>
+</nav>
+          
+          {/* User Profile and Logout */}
+          <div className="hidden md:flex items-center space-x-4">
+            {user && (
+              <div className="flex items-center space-x-3">
+                <div className="text-sm">
+                  <p className="font-medium text-gray-900">{user.firstName || user.name}</p>
+                  <p className="text-gray-500">{user.emailAddress || user.email}</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="small"
+                  onClick={logout}
+                  icon="LogOut"
+                >
+                  Logout
+                </Button>
+              </div>
+            )}
+          </div>
 
           {/* Mobile menu button */}
           <button
@@ -83,7 +108,24 @@ const Header = () => {
                   <ApperIcon name={item.icon} className="h-4 w-4" />
                   <span>{item.name}</span>
                 </Link>
-              ))}
+))}
+              {user && (
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <div className="px-3 py-2">
+                    <p className="font-medium text-gray-900">{user.firstName || user.name}</p>
+                    <p className="text-sm text-gray-500">{user.emailAddress || user.email}</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="small"
+                    onClick={logout}
+                    icon="LogOut"
+                    className="mx-3 mt-2 w-auto"
+                  >
+                    Logout
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}
