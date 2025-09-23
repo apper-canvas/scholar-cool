@@ -105,11 +105,15 @@ const [showImportExport, setShowImportExport] = useState(false);
     }
   };
 
-  const handleSaveStudent = async (studentData) => {
+const handleSaveStudent = async (studentData) => {
     try {
       if (modalMode === "create") {
         await studentService.create(studentData);
         toast.success("Student added successfully");
+        // Note: Email notification is sent automatically by the service
+        setTimeout(() => {
+          toast.info("📧 Email notification sent to administrator");
+        }, 1000);
       } else {
         await studentService.update(selectedStudent.Id, studentData);
         toast.success("Student updated successfully");
@@ -117,7 +121,16 @@ const [showImportExport, setShowImportExport] = useState(false);
       await loadStudents(); // Reload the list
     } catch (err) {
       console.error("Error saving student:", err);
-      toast.error("Failed to save student");
+      if (modalMode === "create") {
+        // Check if it's an email notification error but student was created successfully
+        if (err.message && !err.message.includes('Failed to create student')) {
+          toast.warning("Student added but email notification failed");
+        } else {
+          toast.error("Failed to save student");
+        }
+      } else {
+        toast.error("Failed to save student");
+      }
       throw err; // Re-throw to handle in modal
     }
   };

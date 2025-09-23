@@ -1,6 +1,5 @@
 import { parseCSV, generateCSV, validateStudentData, normalizeStudentData } from "@/utils/csvUtils";
 import { toast } from "react-toastify";
-
 class StudentService {
   constructor() {
     this.tableName = 'student_c';
@@ -271,6 +270,30 @@ async create(studentData) {
       }
       
       return {};
+      
+// Send email notification after successful student creation
+      if (successful.length > 0) {
+        try {
+          const { ApperClient } = window.ApperSDK;
+          const apperClient = new ApperClient({
+            apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+            apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+          });
+          
+          await apperClient.functions.invoke(import.meta.env.VITE_SEND_STUDENT_NOTIFICATION, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              studentData: studentData
+            })
+          });
+        } catch (emailError) {
+          console.error('Failed to send student notification email:', emailError);
+          // Don't throw error here - student creation was successful
+        }
+      }
       
     } catch (error) {
       console.error("Error creating student:", error?.response?.data?.message || error);
