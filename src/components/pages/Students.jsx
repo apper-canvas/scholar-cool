@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import StudentTable from "@/components/organisms/StudentTable";
 import StudentModal from "@/components/organisms/StudentModal";
+import ImportExportModal from "@/components/organisms/ImportExportModal";
 import Button from "@/components/atoms/Button";
+import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
@@ -21,6 +23,9 @@ const Students = () => {
   const queryParams = new URLSearchParams(location.search);
   const shouldCreateStudent = queryParams.get("action") === "create";
 
+const [showImportExport, setShowImportExport] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+
   const loadStudents = async () => {
     try {
       setLoading(true);
@@ -32,6 +37,30 @@ const Students = () => {
       console.error("Error loading students:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImportStudents = async (file) => {
+    try {
+      setImportLoading(true);
+      const result = await studentService.bulkImport(file);
+      await loadStudents(); // Refresh the list
+      return result;
+    } catch (error) {
+      throw error;
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
+  const handleExportStudents = async () => {
+    try {
+      setImportLoading(true);
+      await studentService.bulkExport();
+    } catch (error) {
+      throw error;
+    } finally {
+      setImportLoading(false);
     }
   };
 
@@ -109,7 +138,7 @@ const Students = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+{/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Students</h1>
@@ -117,13 +146,24 @@ const Students = () => {
             Manage student information, enrollment, and academic records
           </p>
         </div>
-        <Button
-          variant="primary"
-          icon="UserPlus"
-          onClick={handleCreateStudent}
-        >
-          Add Student
-        </Button>
+        <div className="flex items-center space-x-3">
+          <div className="relative">
+            <Button
+              variant="secondary"
+              icon="Download"
+              onClick={() => setShowImportExport(true)}
+            >
+              Import/Export
+            </Button>
+          </div>
+          <Button
+            variant="primary"
+            icon="UserPlus"
+            onClick={handleCreateStudent}
+          >
+            Add Student
+          </Button>
+        </div>
       </div>
 
       {/* Content */}
@@ -136,13 +176,24 @@ const Students = () => {
           icon="Users"
         />
       ) : (
-        <StudentTable
+<StudentTable
           students={students}
           onViewStudent={handleViewStudent}
           onEditStudent={handleEditStudent}
           onDeleteStudent={handleDeleteStudent}
           loading={loading}
         />
+      )}
+
+      {/* Import/Export Modal */}
+      <ImportExportModal
+        isOpen={showImportExport}
+        onClose={() => setShowImportExport(false)}
+        onImport={handleImportStudents}
+        onExport={handleExportStudents}
+        type="students"
+        loading={importLoading}
+      />
       )}
 
       {/* Modal */}

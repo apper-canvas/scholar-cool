@@ -8,6 +8,7 @@ import Badge from "@/components/atoms/Badge";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
+import ImportExportModal from "@/components/organisms/ImportExportModal";
 import { gradeService } from "@/services/api/gradeService";
 import { studentService } from "@/services/api/studentService";
 import { courseService } from "@/services/api/courseService";
@@ -34,6 +35,9 @@ const Grades = () => {
     semester: "Fall 2024"
   });
 
+const [showImportExport, setShowImportExport] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -56,10 +60,33 @@ const Grades = () => {
     }
   };
 
+  const handleImportGrades = async (file) => {
+    try {
+      setImportLoading(true);
+      const result = await gradeService.bulkImport(file);
+      await loadData(); // Refresh the data
+      return result;
+    } catch (error) {
+      throw error;
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
+  const handleExportGrades = async () => {
+    try {
+      setImportLoading(true);
+      await gradeService.bulkExport();
+    } catch (error) {
+      throw error;
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadData();
   }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -179,20 +206,29 @@ const Grades = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+<div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Grades</h1>
           <p className="text-secondary mt-2">
             Record and manage student grades and assignments
           </p>
         </div>
-        <Button
-          variant="primary"
-          icon="Plus"
-          onClick={() => setShowAddForm(true)}
-        >
-          Record Grade
-        </Button>
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="secondary"
+            icon="Download"
+            onClick={() => setShowImportExport(true)}
+          >
+            Import/Export
+          </Button>
+          <Button
+            variant="primary"
+            icon="Plus"
+            onClick={() => setShowAddForm(true)}
+          >
+            Record Grade
+          </Button>
+        </div>
       </div>
 
       {/* Add Grade Form */}
@@ -348,7 +384,7 @@ const Grades = () => {
           icon="BookOpen"
         />
       ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -417,6 +453,16 @@ const Grades = () => {
       <div className="text-sm text-secondary">
         Showing {filteredGrades.length} of {grades.length} grades
       </div>
+
+      {/* Import/Export Modal */}
+      <ImportExportModal
+        isOpen={showImportExport}
+        onClose={() => setShowImportExport(false)}
+        onImport={handleImportGrades}
+        onExport={handleExportGrades}
+        type="grades"
+        loading={importLoading}
+      />
     </div>
   );
 };
