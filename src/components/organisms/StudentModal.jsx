@@ -429,11 +429,11 @@ disabled={isReadOnly}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Parent/Guardian Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     label="Full Name"
                     value={formData.parentGuardian.name}
-                    onChange={(value) => handleChange("parentGuardian.name", value)}
+                    onChange={(e) => handleChange("parentGuardian.name", e.target.value)}
                     placeholder="Enter parent/guardian name"
                     required
                     readOnly={mode === "view"}
@@ -441,8 +441,8 @@ disabled={isReadOnly}
                   <FormField
                     label="Relationship"
                     type="select"
-                    value={formData.parentGuardian.relationship}
-                    onChange={(value) => handleChange("parentGuardian.relationship", value)}
+value={formData.parentGuardian.relationship}
+                    onChange={(e) => handleChange("parentGuardian.relationship", e.target.value)}
                     options={[
                       { value: "", label: "Select relationship" },
                       { value: "Mother", label: "Mother" },
@@ -455,36 +455,36 @@ disabled={isReadOnly}
                     readOnly={mode === "view"}
                   />
                   <FormField
-                    label="Primary Phone"
+label="Primary Phone"
                     type="tel"
                     value={formData.parentGuardian.primaryPhone}
-                    onChange={(value) => handleChange("parentGuardian.primaryPhone", value)}
+                    onChange={(e) => handleChange("parentGuardian.primaryPhone", e.target.value)}
                     placeholder="(555) 123-4567"
                     required
                     readOnly={mode === "view"}
                   />
                   <FormField
-                    label="Secondary Phone"
+label="Secondary Phone"
                     type="tel"
                     value={formData.parentGuardian.secondaryPhone}
-                    onChange={(value) => handleChange("parentGuardian.secondaryPhone", value)}
+                    onChange={(e) => handleChange("parentGuardian.secondaryPhone", e.target.value)}
                     placeholder="(555) 123-4567"
                     readOnly={mode === "view"}
                   />
                   <FormField
-                    label="Primary Email"
+label="Primary Email"
                     type="email"
                     value={formData.parentGuardian.primaryEmail}
-                    onChange={(value) => handleChange("parentGuardian.primaryEmail", value)}
+                    onChange={(e) => handleChange("parentGuardian.primaryEmail", e.target.value)}
                     placeholder="parent@example.com"
                     required
                     readOnly={mode === "view"}
                   />
-                  <FormField
+<FormField
                     label="Secondary Email"
                     type="email"
                     value={formData.parentGuardian.secondaryEmail}
-                    onChange={(value) => handleChange("parentGuardian.secondaryEmail", value)}
+                    onChange={(e) => handleChange("parentGuardian.secondaryEmail", e.target.value)}
                     placeholder="parent2@example.com"
                     readOnly={mode === "view"}
                   />
@@ -495,32 +495,32 @@ disabled={isReadOnly}
                 <h4 className="text-md font-medium text-gray-900 mb-3">Address</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <FormField
+<FormField
                       label="Street Address"
                       value={formData.parentGuardian.address.street}
-                      onChange={(value) => handleChange("parentGuardian.address.street", value)}
+                      onChange={(e) => handleChange("parentGuardian.address.street", e.target.value)}
                       placeholder="123 Main St"
                       readOnly={mode === "view"}
                     />
                   </div>
-                  <FormField
+<FormField
                     label="City"
                     value={formData.parentGuardian.address.city}
-                    onChange={(value) => handleChange("parentGuardian.address.city", value)}
+                    onChange={(e) => handleChange("parentGuardian.address.city", e.target.value)}
                     placeholder="City"
                     readOnly={mode === "view"}
                   />
-                  <FormField
+<FormField
                     label="State"
                     value={formData.parentGuardian.address.state}
-                    onChange={(value) => handleChange("parentGuardian.address.state", value)}
+                    onChange={(e) => handleChange("parentGuardian.address.state", e.target.value)}
                     placeholder="State"
                     readOnly={mode === "view"}
                   />
-                  <FormField
+<FormField
                     label="ZIP Code"
                     value={formData.parentGuardian.address.zipCode}
-                    onChange={(value) => handleChange("parentGuardian.address.zipCode", value)}
+                    onChange={(e) => handleChange("parentGuardian.address.zipCode", e.target.value)}
                     placeholder="12345"
                     readOnly={mode === "view"}
                   />
