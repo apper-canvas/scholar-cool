@@ -1,0 +1,122 @@
+[
+  {
+    "Id": 1,
+    "courseName": "Algebra II",
+    "courseCode": "MATH201",
+    "teacher": "Ms. Sarah Davis",
+    "creditHours": 4,
+    "semester": "Fall 2024",
+    "schedule": {
+      "days": ["Monday", "Wednesday", "Friday"],
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "room": "101"
+    },
+    "enrolledStudents": [1, 2, 3, 6, 10]
+  },
+  {
+    "Id": 2,
+    "courseName": "Biology",
+    "courseCode": "SCI301",
+    "teacher": "Mr. David Johnson",
+    "creditHours": 4,
+    "semester": "Fall 2024",
+    "schedule": {
+      "days": ["Tuesday", "Thursday"],
+      "startTime": "10:30",
+      "endTime": "12:00",
+      "room": "Lab A"
+    },
+    "enrolledStudents": [1, 2, 4, 7]
+  },
+  {
+    "Id": 3,
+    "courseName": "US History",
+    "courseCode": "HIST401",
+    "teacher": "Dr. Michael Wilson",
+    "creditHours": 3,
+    "semester": "Fall 2024",
+    "schedule": {
+      "days": ["Monday", "Wednesday", "Friday"],
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "room": "203"
+    },
+    "enrolledStudents": [2, 3, 8]
+  },
+  {
+    "Id": 4,
+    "courseName": "English Literature",
+    "courseCode": "ENG301",
+    "teacher": "Mrs. Jennifer Smith",
+    "creditHours": 3,
+    "semester": "Fall 2024",
+    "schedule": {
+      "days": ["Tuesday", "Thursday"],
+      "startTime": "13:00",
+      "endTime": "14:30",
+      "room": "205"
+    },
+    "enrolledStudents": [3, 4, 5]
+  },
+  {
+    "Id": 5,
+    "courseName": "Chemistry",
+    "courseCode": "SCI401",
+    "teacher": "Prof. Robert Brown",
+    "creditHours": 4,
+    "semester": "Fall 2024",
+    "schedule": {
+      "days": ["Monday", "Wednesday", "Friday"],
+      "startTime": "14:00",
+      "endTime": "15:30",
+      "room": "Lab B"
+    },
+    "enrolledStudents": [5, 9]
+  },
+  {
+    "Id": 6,
+    "courseName": "Physical Education",
+    "courseCode": "PE101",
+    "teacher": "Coach Lisa Martinez",
+    "creditHours": 1,
+    "semester": "Fall 2024",
+    "schedule": {
+      "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "room": "Gymnasium"
+    },
+    "enrolledStudents": [1, 2, 3, 4, 5, 6, 7, 10]
+  },
+  {
+    "Id": 7,
+    "courseName": "Spanish II",
+    "courseCode": "LANG201",
+    "teacher": "Ms. Carmen Rodriguez",
+    "creditHours": 3,
+    "semester": "Fall 2024",
+    "schedule": {
+      "days": ["Tuesday", "Thursday"],
+      "startTime": "08:00",
+      "endTime": "09:30",
+      "room": "107"
+    },
+    "enrolledStudents": [1, 3, 4, 6, 7]
+  },
+  {
+    "Id": 8,
+    "courseName": "Art History",
+    "courseCode": "ART301",
+    "teacher": "Dr. Emily Thompson",
+    "creditHours": 3,
+    "semester": "Fall 2024",
+    "schedule": {
+      "days": ["Wednesday"],
+      "startTime": "16:00",
+      "endTime": "18:30",
+      "room": "Art Studio"
+    },
+    "enrolledStudents": [2, 5, 7, 9]
+  }
+]
