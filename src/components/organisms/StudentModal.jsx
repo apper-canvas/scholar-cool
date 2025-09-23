@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
 import FormField from "@/components/molecules/FormField";
+import Attendance from "@/components/pages/Attendance";
+import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 
 const StudentModal = ({ 
@@ -227,9 +228,10 @@ const tabs = [
           </nav>
         </div>
 
-        {/* Content */}
-<form onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[70vh]">
+{/* Content */}
+        <div className="p-6 overflow-y-auto max-h-[70vh]">
           {activeTab === "personal" && (
+            <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
@@ -279,14 +281,15 @@ const tabs = [
                 label="Phone Number"
                 value={formData.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
-                disabled={isReadOnly}
+disabled={isReadOnly}
                 required
               />
-            </div>
+              </div>
+            </form>
           )}
-
+          
           {activeTab === "academic" && (
-            <div className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   label="Grade Level"
@@ -349,13 +352,13 @@ const tabs = [
                       <p className="font-medium">94%</p>
                     </div>
                   </div>
-                </div>
+</div>
               )}
-            </div>
+            </form>
           )}
-
+          
           {activeTab === "contact" && (
-            <div className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* Address */}
               <div>
                 <h4 className="font-medium text-gray-900 mb-4">Address</h4>
@@ -416,14 +419,14 @@ const tabs = [
                       required
                     />
                   </div>
-                </div>
-              </div>
 </div>
+              </div>
+            </form>
           )}
           
           {/* Parent/Guardian Tab */}
           {activeTab === "parent" && (
-            <div className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Parent/Guardian Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -638,11 +641,11 @@ const tabs = [
                       </div>
                     ))}
                   </div>
-                )}
+)}
               </div>
-            </div>
+            </form>
           )}
-        </form>
+        </div>
 
         {/* Footer */}
         <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
