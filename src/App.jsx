@@ -1,21 +1,21 @@
-import { createContext, useEffect, useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { createContext, useEffect, useState } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import { setUser, clearUser } from './store/userSlice';
 import Layout from "@/components/Layout";
-import Dashboard from "@/components/pages/Dashboard";
-import Students from "@/components/pages/Students";
-import Grades from "@/components/pages/Grades";
-import Attendance from "@/components/pages/Attendance";
-import Courses from "@/components/pages/Courses";
+import PromptPassword from "@/components/pages/PromptPassword";
+import Callback from "@/components/pages/Callback";
 import Reports from "@/components/pages/Reports";
-import Login from '@/components/pages/Login';
-import Signup from '@/components/pages/Signup';
-import Callback from '@/components/pages/Callback';
-import ErrorPage from '@/components/pages/ErrorPage';
-import ResetPassword from '@/components/pages/ResetPassword';
-import PromptPassword from '@/components/pages/PromptPassword';
+import Attendance from "@/components/pages/Attendance";
+import ResetPassword from "@/components/pages/ResetPassword";
+import Dashboard from "@/components/pages/Dashboard";
+import Login from "@/components/pages/Login";
+import Courses from "@/components/pages/Courses";
+import Signup from "@/components/pages/Signup";
+import Grades from "@/components/pages/Grades";
+import ErrorPage from "@/components/pages/ErrorPage";
+import Students from "@/components/pages/Students";
+import { clearUser, setUser } from "@/store/userSlice";
 
 // Create auth context
 export const AuthContext = createContext(null);
@@ -94,12 +94,12 @@ function App() {
           dispatch(clearUser());
         }
       },
-      onError: function(error) {
+onError: function(error) {
         console.error("Authentication failed:", error);
         setIsInitialized(true);
       }
     });
-  }, []);// No props and state should be bound
+  }, [navigate, dispatch]);
   
   // Authentication methods to share via context
   const authMethods = {
@@ -118,10 +118,12 @@ function App() {
   
   // Don't render routes until initialization is complete
   if (!isInitialized) {
-    return <div className="loading flex items-center justify-center p-6 h-full w-full"><svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M12 2v4"></path><path d="m16.2 7.8 2.9-2.9"></path><path d="M18 12h4"></path><path d="m16.2 16.2 2.9 2.9"></path><path d="M12 18v4"></path><path d="m4.9 19.1 2.9-2.9"></path><path d="M2 12h4"></path><path d="m4.9 4.9 2.9 2.9"></path></svg></div>;
+    return <div className="loading flex items-center justify-center p-6 h-full w-full"><svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4"></path><path d="m16.2 7.8 2.9-2.9"></path><path d="M18 12h4"></path><path d="m16.2 16.2 2.9 2.9"></path><path d="M12 18v4"></path><path d="m4.9 19.1 2.9-2.9"></path><path d="M2 12h4"></path><path d="m4.9 4.9 2.9 2.9"></path></svg></div>;
   }
   
-  return (
+return (
+  
+return (
     <AuthContext.Provider value={authMethods}>
       <Routes>
         <Route path="/login" element={<Login />} />
