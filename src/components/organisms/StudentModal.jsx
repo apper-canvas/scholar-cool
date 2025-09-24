@@ -18,7 +18,6 @@ const [formData, setFormData] = useState({
     email: "",
     phone: "",
     dateOfBirth: "",
-    gradeLevel: "",
     enrollmentStatus: "Active",
     studentId: "",
     address: {
@@ -60,7 +59,6 @@ if (student && isOpen) {
         email: student.email || "",
         phone: student.phone || "",
         dateOfBirth: student.dateOfBirth || "",
-        gradeLevel: student.gradeLevel || "",
         enrollmentStatus: student.enrollmentStatus || "Active",
         studentId: student.studentId || "",
         address: student.address || {
@@ -96,8 +94,7 @@ if (student && isOpen) {
         lastName: "",
         email: "",
         phone: "",
-        dateOfBirth: "",
-        gradeLevel: "9",
+dateOfBirth: "",
         enrollmentStatus: "Active",
         studentId: `STU${Date.now()}`,
         address: {
@@ -284,18 +281,6 @@ label="Email Address"
           {activeTab === "academic" && (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-<FormField
-                  label="Grade Level"
-                  type="select"
-                  value={formData.gradeLevel}
-                  onChange={(e) => handleChange("gradeLevel", e.target.value)}
-                  disabled={isReadOnly}
-                >
-                  <option value="9">Grade 9</option>
-                  <option value="10">Grade 10</option>
-                  <option value="11">Grade 11</option>
-                  <option value="12">Grade 12</option>
-                </FormField>
 
                 <div className="space-y-2">
                   <label className="form-label">Enrollment Status</label>

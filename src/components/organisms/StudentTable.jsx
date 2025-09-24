@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import ApperIcon from "@/components/ApperIcon";
-import Badge from "@/components/atoms/Badge";
-import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
 import FilterDropdown from "@/components/molecules/FilterDropdown";
+import Loading from "@/components/ui/Loading";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
 
 const StudentTable = ({ 
   students, 
@@ -14,7 +15,6 @@ const StudentTable = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [gradeFilter, setGradeFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState("lastName");
   const [sortDirection, setSortDirection] = useState("asc");
@@ -26,12 +26,6 @@ const StudentTable = ({
     { value: "Graduated", label: "Graduated" }
   ];
 
-  const gradeOptions = [
-    { value: "9", label: "Grade 9" },
-    { value: "10", label: "Grade 10" },
-    { value: "11", label: "Grade 11" },
-    { value: "12", label: "Grade 12" }
-  ];
 
   const filteredAndSortedStudents = useMemo(() => {
     let filtered = students.filter(student => {
@@ -42,9 +36,8 @@ const StudentTable = ({
         student.studentId.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus = statusFilter === "" || student.enrollmentStatus === statusFilter;
-      const matchesGrade = gradeFilter === "" || student.gradeLevel === gradeFilter;
 
-      return matchesSearch && matchesStatus && matchesGrade;
+return matchesSearch && matchesStatus;
     });
 
     // Sort students
@@ -65,7 +58,7 @@ const StudentTable = ({
     });
 
     return filtered;
-  }, [students, searchTerm, statusFilter, gradeFilter, sortField, sortDirection]);
+}, [students, searchTerm, statusFilter, sortField, sortDirection]);
 
   const paginatedStudents = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -117,13 +110,6 @@ const StudentTable = ({
             onChange={setStatusFilter}
             placeholder="All Status"
           />
-          <FilterDropdown
-            label="Grade"
-            options={gradeOptions}
-            value={gradeFilter}
-            onChange={setGradeFilter}
-            placeholder="All Grades"
-          />
         </div>
       </div>
 
@@ -156,16 +142,7 @@ const StudentTable = ({
                     <ApperIcon name={getSortIcon("lastName")} className="h-3 w-3" />
                   </div>
                 </th>
-                <th className="table-header">Email</th>
-                <th 
-                  className="table-header cursor-pointer select-none"
-                  onClick={() => handleSort("gradeLevel")}
-                >
-                  <div className="flex items-center space-x-1">
-                    <span>Grade</span>
-                    <ApperIcon name={getSortIcon("gradeLevel")} className="h-3 w-3" />
-                  </div>
-                </th>
+<th className="table-header">Email</th>
                 <th className="table-header">Status</th>
                 <th 
                   className="table-header cursor-pointer select-none"
@@ -206,9 +183,6 @@ const StudentTable = ({
                   </td>
                   <td className="table-cell text-sm text-secondary">
                     {student.email}
-                  </td>
-                  <td className="table-cell">
-                    <span className="text-sm font-medium">Grade {student.gradeLevel}</span>
                   </td>
                   <td className="table-cell">
                     {getStatusBadge(student.enrollmentStatus)}
