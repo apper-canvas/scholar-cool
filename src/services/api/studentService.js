@@ -269,20 +269,19 @@ const successful = response.results.filter(r => r.success);
         // Send email notification after successful student creation
         if (successful.length > 0) {
           try {
-            const { ApperClient } = window.ApperSDK;
+const { ApperClient } = window.ApperSDK;
             const apperClient = new ApperClient({
               apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
               apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
             });
             
             await apperClient.functions.invoke(import.meta.env.VITE_SEND_STUDENT_NOTIFICATION, {
-              method: 'POST',
+              body: {
+                studentData: studentData
+              },
               headers: {
                 'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                studentData: studentData
-              })
+              }
             });
           } catch (emailError) {
             console.error('Failed to send student notification email:', emailError);
