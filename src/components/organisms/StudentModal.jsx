@@ -235,54 +235,47 @@ const tabs = [
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
-                  label="First Name"
+label="First Name"
                   value={formData.firstName}
                   onChange={(e) => handleChange("firstName", e.target.value)}
                   disabled={isReadOnly}
-                  required
                 />
                 <FormField
                   label="Last Name"
                   value={formData.lastName}
-                  onChange={(e) => handleChange("lastName", e.target.value)}
+onChange={(e) => handleChange("lastName", e.target.value)}
                   disabled={isReadOnly}
-                  required
                 />
               </div>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   label="Student ID"
                   value={formData.studentId}
                   onChange={(e) => handleChange("studentId", e.target.value)}
                   disabled={isReadOnly || mode === "edit"}
-                  required
-                />
+/>
                 <FormField
                   label="Date of Birth"
                   type="date"
                   value={formData.dateOfBirth}
-                  onChange={(e) => handleChange("dateOfBirth", e.target.value)}
+onChange={(e) => handleChange("dateOfBirth", e.target.value)}
                   disabled={isReadOnly}
-                  required
                 />
               </div>
 
               <FormField
-                label="Email Address"
+label="Email Address"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleChange("email", e.target.value)}
                 disabled={isReadOnly}
-                required
               />
 
-              <FormField
+<FormField
                 label="Phone Number"
                 value={formData.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
-disabled={isReadOnly}
-                required
+                disabled={isReadOnly}
               />
               </div>
             </form>
@@ -291,13 +284,12 @@ disabled={isReadOnly}
           {activeTab === "academic" && (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
+<FormField
                   label="Grade Level"
                   type="select"
                   value={formData.gradeLevel}
                   onChange={(e) => handleChange("gradeLevel", e.target.value)}
                   disabled={isReadOnly}
-                  required
                 >
                   <option value="9">Grade 9</option>
                   <option value="10">Grade 10</option>
@@ -312,11 +304,10 @@ disabled={isReadOnly}
                       {getStatusBadge(formData.enrollmentStatus)}
                     </div>
                   ) : (
-                    <FormField
+<FormField
                       type="select"
                       value={formData.enrollmentStatus}
                       onChange={(e) => handleChange("enrollmentStatus", e.target.value)}
-                      required
                     >
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
@@ -397,26 +388,23 @@ disabled={isReadOnly}
                 <h4 className="font-medium text-gray-900 mb-4">Emergency Contact</h4>
                 <div className="space-y-4">
                   <FormField
-                    label="Contact Name"
+label="Contact Name"
                     value={formData.emergencyContact.name}
                     onChange={(e) => handleChange("emergencyContact.name", e.target.value)}
                     disabled={isReadOnly}
-                    required
                   />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
+<FormField
                       label="Relationship"
                       value={formData.emergencyContact.relationship}
                       onChange={(e) => handleChange("emergencyContact.relationship", e.target.value)}
                       disabled={isReadOnly}
-                      required
                     />
-                    <FormField
+<FormField
                       label="Phone Number"
                       value={formData.emergencyContact.phone}
                       onChange={(e) => handleChange("emergencyContact.phone", e.target.value)}
                       disabled={isReadOnly}
-                      required
                     />
                   </div>
 </div>
@@ -430,12 +418,11 @@ disabled={isReadOnly}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Parent/Guardian Information</h3>
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
+<FormField
                     label="Full Name"
                     value={formData.parentGuardian.name}
                     onChange={(e) => handleChange("parentGuardian.name", e.target.value)}
                     placeholder="Enter parent/guardian name"
-                    required
                     readOnly={mode === "view"}
                   />
                   <FormField
@@ -454,13 +441,12 @@ value={formData.parentGuardian.relationship}
                     ]}
                     readOnly={mode === "view"}
                   />
-                  <FormField
-label="Primary Phone"
+<FormField
+                    label="Primary Phone"
                     type="tel"
                     value={formData.parentGuardian.primaryPhone}
                     onChange={(e) => handleChange("parentGuardian.primaryPhone", e.target.value)}
                     placeholder="(555) 123-4567"
-                    required
                     readOnly={mode === "view"}
                   />
                   <FormField
@@ -471,13 +457,12 @@ label="Secondary Phone"
                     placeholder="(555) 123-4567"
                     readOnly={mode === "view"}
                   />
-                  <FormField
-label="Primary Email"
+<FormField
+                    label="Primary Email"
                     type="email"
                     value={formData.parentGuardian.primaryEmail}
                     onChange={(e) => handleChange("parentGuardian.primaryEmail", e.target.value)}
                     placeholder="parent@example.com"
-                    required
                     readOnly={mode === "view"}
                   />
 <FormField
